@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-export const pkg = require("../../package.json"); // do not convert to import
+export const pkg = Object.freeze(require("../../package.json")); // do not convert to import
 
 export type ConfigurationKey =
     "windowBackgrounds" |
