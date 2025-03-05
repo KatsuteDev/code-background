@@ -8,7 +8,7 @@
         "theme": "dark"
     },
     "publisher": "Katsute",
-    "version": "3.1.0",
+    "version": "4.0.0",
     "private": true,
     "engines": {
         "vscode": "^1.97.0"
@@ -69,7 +69,7 @@
             "order": 0,
             "properties": {
                 "background.windowBackgrounds": {
-                    "markdownDescription": "The list of files, globs, or URLs to pull background images from.\n\n* Use only `/` for directories, `\\` is reserved for escape characters.\n\n* Image URLs must be served over HTTPS.",
+                    "markdownDescription": "%background.configuration.backgroundDescription%",
                     "type": "array",
                     "order": 0,
                     "default": [],
@@ -78,7 +78,7 @@
                     }
                 },
                 "background.editorBackgrounds": {
-                    "markdownDescription": "The list of files, globs, or URLs to pull background images from.\n\n* Use only `/` for directories, `\\` is reserved for escape characters.\n\n* Image URLs must be served over HTTPS.",
+                    "markdownDescription": "%background.configuration.backgroundDescription%",
                     "type": "array",
                     "order": 1,
                     "default": [],
@@ -87,7 +87,7 @@
                     }
                 },
                 "background.sidebarBackgrounds": {
-                    "markdownDescription": "The list of files, globs, or URLs to pull background images from.\n\n* Use only `/` for directories, `\\` is reserved for escape characters.\n\n* Image URLs must be served over HTTPS.",
+                    "markdownDescription": "%background.configuration.backgroundDescription%",
                     "type": "array",
                     "order": 2,
                     "default": [],
@@ -96,7 +96,7 @@
                     }
                 },
                 "background.panelBackgrounds": {
-                    "markdownDescription": "The list of files, globs, or URLs to pull background images from.\n\n* Use only `/` for directories, `\\` is reserved for escape characters.\n\n* Image URLs must be served over HTTPS.",
+                    "markdownDescription": "%background.configuration.backgroundDescription%",
                     "type": "array",
                     "order": 3,
                     "default": [],
@@ -105,7 +105,7 @@
                     }
                 },
                 "background.backgroundAlignment": {
-                    "markdownDescription": "The background image alignment.",
+                    "markdownDescription": "%background.configuration.alignment%",
                     "type": "array",
                     "order": 4,
                     "default": [
@@ -129,11 +129,23 @@
                             "Bottom Center",
                             "Bottom Right",
                             "Manual"
+                        ],
+                        "enumDescriptions": [
+                            "%background.configuration.alignment.top_left%",
+                            "%background.configuration.alignment.top_center%",
+                            "%background.configuration.alignment.top_right%",
+                            "%background.configuration.alignment.center_left%",
+                            "%background.configuration.alignment.center_center%",
+                            "%background.configuration.alignment.center_right%",
+                            "%background.configuration.alignment.bottom_left%",
+                            "%background.configuration.alignment.bottom_center%",
+                            "%background.configuration.alignment.bottom_right%",
+                            "%background.configuration.alignment.manual%"
                         ]
                     }
                 },
                 "background.backgroundAlignmentValue": {
-                    "markdownDescription": "If `#background.backgroundAlignment#` is set to `Manual`, this is the literal value for the `background-position` css property.",
+                    "markdownDescription": "%background.configuration.alignmentValue%",
                     "type": "array",
                     "order": 5,
                     "default": [
@@ -150,7 +162,7 @@
                     }
                 },
                 "background.backgroundBlur": {
-                    "markdownDescription": "The background image blur amount in css units.",
+                    "markdownDescription": "%background.configuration.blurDescription%",
                     "type": "array",
                     "order": 6,
                     "default": [
@@ -167,7 +179,7 @@
                     }
                 },
                 "background.backgroundOpacity": {
-                    "markdownDescription": "The background opacity, make sure this number is not to high, otherwise you may not be able to see the UI and revert this change.\n\n`1` is fully visible and `0` is invisible. If `#background.useInvertedOpacity#` is true, this logic is inverted.",
+                    "markdownDescription": "%background.configuration.opacityDescription%",
                     "type": "array",
                     "order": 7,
                     "default": [
@@ -185,7 +197,7 @@
                     }
                 },
                 "background.backgroundRepeat": {
-                    "markdownDescription": "The background image repeat.",
+                    "markdownDescription": "%background.configuration.repeatDescription%",
                     "type": "array",
                     "order": 8,
                     "default": [
@@ -207,17 +219,17 @@
                             "Repeat Round"
                         ],
                         "enumDescriptions": [
-                            "Do not repeat",
-                            "Repeat X/Y",
-                            "Repeat X",
-                            "Repeat Y",
-                            "Repeat with even spacing to fill the screen",
-                            "Repeat and stretch images to fill the screen"
+                            "%background.configuration.repeat.no_repeat%",
+                            "%background.configuration.repeat.repeat%",
+                            "%background.configuration.repeat.repeat_x%",
+                            "%background.configuration.repeat.repeat_y%",
+                            "%background.configuration.repeat.repeat_space%",
+                            "%background.configuration.repeat.repeat_round%"
                         ]
                     }
                 },
                 "background.backgroundSize": {
-                    "markdownDescription": "The background image size.",
+                    "markdownDescription": "%background.configuration.sizeDescription%",
                     "type": "array",
                     "order": 9,
                     "default": [
@@ -237,15 +249,15 @@
                             "Manual"
                         ],
                         "enumDescriptions": [
-                            "Original image size",
-                            "Fit image to the screen",
-                            "Stretch image to fill the screen",
-                            "Manual size"
+                            "%background.configuration.size.auto%",
+                            "%background.configuration.size.contain%",
+                            "%background.configuration.size.cover%",
+                            "%background.configuration.size.manual%"
                         ]
                     }
                 },
                 "background.backgroundSizeValue": {
-                    "markdownDescription": "If `#background.windowBackgroundSize#` is set to `Manual`, this is the literal value for the `background-size` css property.",
+                    "markdownDescription": "%background.configuration.sizeValue%",
                     "type": "array",
                     "order": 10,
                     "default": [
@@ -262,7 +274,7 @@
                     }
                 },
                 "background.backgroundChangeTime": {
-                    "markdownDescription": "How long in seconds before the background should automatically change.\n\nSet to `0` to always use the same image.",
+                    "markdownDescription": "%background.configuration.timeDescription%",
                     "type": "array",
                     "order": 11,
                     "default": [
@@ -279,41 +291,45 @@
                     }
                 },
                 "background.autoInstall": {
-                    "markdownDescription": "Automatically installs backgrounds and reloads the window on startup if changes are detected or VSCode updates.\n\nThis option is disabled when you run the uninstall command.",
+                    "markdownDescription": "%background.configuration.autoInstallDescription%",
                     "order": 12,
                     "type": "boolean",
                     "default": false
                 },
                 "background.renderContentAboveBackground": {
-                    "markdownDescription": "Render content like images, PDFs, and markdown previews above the background.",
+                    "markdownDescription": "%background.configuration.renderContentAboveBackgroundDescription%",
                     "order": 13,
                     "type": "boolean",
                     "default": false
                 },
                 "background.useInvertedOpacity": {
-                    "markdownDescription": "Use an inverted opacity, so 0 is fully visible and 1 is invisible.",
+                    "markdownDescription": "%background.configuration.useInvertedOpacityDescription%",
                     "order": 14,
                     "type": "boolean",
                     "default": false
                 },
                 "background.smoothImageRendering": {
-                    "markdownDescription": "Use smooth image rendering rather than pixelated rendering when resizing images.",
+                    "markdownDescription": "%background.configuration.smoothImageRenderingDescription%",
                     "order": 15,
                     "type": "boolean",
                     "default": false
                 },
                 "background.settingScope": {
-                    "markdownDescription": "Where to save and load background settings.\n\nThis does not automatically update the background on workspace change, you need to also turn on `#background.autoInstall#`.",
+                    "markdownDescription": "%background.configuration.settingScopeDescription%",
                     "order": 16,
                     "type": "string",
                     "enum": [
                         "Global",
                         "Workspace"
                     ],
+                    "enumDescriptions": [
+                        "%background.configuration.settingScopeGlobal%",
+                        "%background.configuration.settingScopeWorkspace%"
+                    ],
                     "default": "Global"
                 },
                 "background.CSS": {
-                    "markdownDescription": "Apply raw CSS to VSCode.",
+                    "markdownDescription": "%background.configuration.CSSDescription%",
                     "order": 17,
                     "type": "string",
                     "editPresentation": "multilineText",
@@ -351,6 +367,7 @@
         "@types/node": "22.13.0",
         "@types/tmp": "0.2.6",
         "@types/vscode": "1.97.0",
+        "@vscode/l10n-dev": "0.0.35",
         "@vscode/sudo-prompt": "9.3.1",
         "@vscode/test-electron": "2.4.1",
         "@vscode/vsce": "3.2.2",
