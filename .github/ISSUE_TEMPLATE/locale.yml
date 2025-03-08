@@ -1,0 +1,17 @@
+name: Locale Issue Report
+description: Report a locale issue
+labels: [localization]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |-
+        Do not use this form to request new languages, new languages can only be added if someone opens a PR. Refer to [Contributing Locale Updates](https://github.com/KatsuteDev/Background#contributing-locale-updates) for steps to add a language.<br><br>
+
+  - type: textarea
+    attributes:
+      label: Issue
+      description: |-
+        Explain the issue.
+    validations:
+      required: true

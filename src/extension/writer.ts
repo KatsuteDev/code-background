@@ -28,6 +28,7 @@ import { copyCommand, generateChecksum } from "../lib/file";
 
 import { clean, inject } from "./inject"
 import { installDelay, setActive } from "../extension";
+import { format } from "../lib/l10n";
 
 export const install: (workbench: PathLike, product: PathLike, force?: boolean) => void = (workbench: PathLike, product: PathLike, force: boolean = false) => {
     write(workbench, product, inject(readFileSync(workbench, "utf-8")), force);
@@ -67,12 +68,12 @@ const write: (workbench: PathLike, product: PathLike, content: string, force?: b
         /* extension.ts    */ product.toString().replace(/\\/g, '/').includes("/snap/");
 
         if(snap){
-            window.showErrorMessage("Background extension does not support snap installations, use deb or rpm");
+            window.showErrorMessage(format("background.extension.writer.snapError"));
         }else{
             window.showWarningMessage(
-                "Failed to write changes, run command as administrator?",
+                format("background.extension.writer.adminAsk"),
                 {
-                    detail: `The Background extension does not have permission to write changes, run command using administrator permissions?\n\n${error.message}`,
+                    detail: `${format("background.extension.writer.adminPrompt")}\n\n${error.message}`,
                     modal: true
                 },
                 "Yes"
@@ -92,9 +93,9 @@ const write: (workbench: PathLike, product: PathLike, content: string, force?: b
                     exec(command, { name: "VSCode Extension Host" }, (err: any) => {
                         if(err){
                             window.showErrorMessage(
-                                "Failed to write changes",
+                                format("background.extension.writer.failedWrite"),
                                 {
-                                    detail: `OS: ${platform()} ${release()}\nUsing command: ${command}\n\n${err.name}\n${err.message}`.trim(),
+                                    detail: `OS: ${platform()} ${release()}\nCMD: ${command}\n\n${err.name}\n${err.message}`.trim(),
                                     modal: true
                                 }
                             );

@@ -23,7 +23,7 @@ import { ConfigurationKey, pkg } from "../extension/package";
 import { UI, configuration, get, target, update } from "../extension/config";
 
 import { count } from "../lib/glob";
-import { appendS, appendIf, capitalize } from "../lib/string";
+import { appendIf, capitalize } from "../lib/string";
 import { CommandQuickPickItem, quickPickItem, separator, showQuickPick } from "../lib/vscode"
 
 import { show as fileMenu } from "./file";
@@ -33,6 +33,7 @@ import { show as opacityMenu } from "./opacity";
 import { show as repeatMenu } from "./repeat";
 import { show as sizeMenu } from "./size";
 import { show as timeMenu } from "./time";
+import { format } from "../lib/l10n";
 
 const issueUrl: string = `https://github.com/KatsuteDev/Background/issues/new?template=bug.yml&os=${encodeURIComponent(`${platform()} ${release()}`)}&vs=${encodeURIComponent(version)}&version=${encodeURIComponent(pkg.version)}`;
 const featureUrl: string = "https://github.com/KatsuteDev/Background/issues/new?template=feature.yml";
@@ -50,30 +51,30 @@ export const optionMenu: () => void = () =>
         separator(),
         quickPickItem({
             alwaysShow: true,
-            label: "$(check) Install",
+            label: `$(check) ${format("background.menu.install")}`,
             handle: () => commands.executeCommand("background.install")
         }),
         quickPickItem({
             alwaysShow: true,
-            label: "$(close) Uninstall",
+            label: `$(close) ${format("background.menu.uninstall")}`,
             handle: () => commands.executeCommand("background.uninstall")
         }),
         quickPickItem({
             alwaysShow: true,
-            label: "$(refresh) Reload",
+            label: `$(refresh) ${format("background.menu.reload")}`,
             handle: () => commands.executeCommand("background.reload")
         }),
         quickPickItem({
-            label: "$(settings-gear) More Options",
+            label: `$(settings-gear) ${format("background.menu.more")}`,
             handle: () => moreMenu()
         }),
         separator(),
         quickPickItem({
-            label: "$(question) Help",
+            label: `$(question) ${format("background.menu.help")}`,
             handle: () => commands.executeCommand("background.help")
         }),
     ], {
-        title: "Background" + (target() === ConfigurationTarget.Workspace ? " (Workspace)": ""),
+        title: "Background" + (target() === ConfigurationTarget.Workspace ? ` (${format("background.configuration.settingScopeWorkspace")})`: ""),
         matchOnDescription: true
     });
 
@@ -87,53 +88,53 @@ const moreMenu: (selected?: number) => void = (selected?: number) => {
 
     showQuickPick([
         quickPickItem({
-            label: "Auto Install",
+            label: format("background.configuration.autoInstall"),
             description: descriptionBool("autoInstall"),
-            detail: "Automatically install background on startup or when VSCode updates",
+            detail: format("background.configuration.autoInstallDescription"),
             handle: handleBool("autoInstall", i++, true)
         }),
         quickPickItem({
-            label: "Render Content Above Background",
+            label: format("background.configuration.renderContentAboveBackground"),
             description: descriptionBool("renderContentAboveBackground"),
-            detail: "Render content like images, PDFs, and markdown previews above the background",
+            detail: format("background.configuration.renderContentAboveBackgroundDescription"),
             handle: handleBool("renderContentAboveBackground", i++)
         }),
         quickPickItem({
-            label: "Use Inverted Opacity",
+            label: format("background.configuration.useInvertedOpacity"),
             description: descriptionBool("useInvertedOpacity"),
-            detail: "Use an inverted opacity, so 0 is fully visible and 1 is invisible",
+            detail: format("background.configuration.useInvertedOpacityDescription"),
             handle: handleBool("useInvertedOpacity", i++)
         }),
         quickPickItem({
-            label: "Smooth Image Rendering",
+            label: format("background.configuration.smoothImageRendering"),
             description: descriptionBool("smoothImageRendering"),
-            detail: "Use smooth image rendering rather than pixelated rendering when resizing images",
+            detail: format("background.configuration.smoothImageRenderingDescription"),
             handle: handleBool("smoothImageRendering", i++)
         }),
         quickPickItem({
-            label: "Setting Scope",
+            label: format("background.configuration.settingScope"),
             description: `[${get("settingScope")}]`,
-            detail: "Where to save settings; workspace requires Auto Install to update background on switch",
+            detail: format("background.configuration.settingScopeDescription"),
             handle: () => update("settingScope", get("settingScope") === "Global" ? "Workspace" : "Global").then(() => moreMenu(i++))
         }),
         separator(),
         quickPickItem({
-            label: "$(output) Changelog",
+            label: `$(output) ${format("background.command.changelog")}`,
             handle: () => commands.executeCommand("background.changelog")
         }),
         quickPickItem({
-            label: "$(bug) Report an issue",
+            label: `$(bug) ${format("background.menu.more.report")}`,
             // unfixed bug in vscode https://github.com/microsoft/vscode/issues/85930
             // @ts-ignore
             handle: () => env.openExternal(`${issueUrl}&settings=${encodeURIComponent("```json\n" + JSON.stringify(configuration(), null, 4) + "\n```")}`)
         }),
         quickPickItem({
-            label: "$(add) Request a feature",
+            label: `$(add) ${format("background.menu.more.feature")}`,
             handle: () => env.openExternal(Uri.parse(featureUrl))
         }),
     ],
     {
-        title: `More Options`,
+        title: format("background.menu.more"),
         matchOnDescription: true,
         matchOnDetail: true
     },
@@ -146,21 +147,21 @@ const moreMenu: (selected?: number) => void = (selected?: number) => {
 const getQuickPick: (ui: UI, icon: string) => CommandQuickPickItem = (ui: UI, icon: string) => {
     // description
     const backgrounds: string[] = get(`${ui}Backgrounds`);
-    const description: string = `${appendS(backgrounds, "Glob")} (${appendS(count(backgrounds), "Background")})`;
+    const description: string = `${backgrounds.length} Globs (${count(backgrounds)} Backgrounds)`;
 
     // detail
     let detail: string =
-        `${get("backgroundAlignment", {ui})} Alignment` + " • " +
-        `${get("backgroundBlur",      {ui})} Blur`      + " • " +
-        `${get("backgroundOpacity",   {ui})} Opacity`   + " • " +
-        `${get("backgroundRepeat",    {ui})} Repeat`    + " • " +
-        `${get("backgroundSize",      {ui})} Size`;
+        `${get("backgroundAlignment", {ui})} ${format("background.menu.align.title")}`  + " • " +
+        `${get("backgroundBlur",      {ui})} ${format("background.menu.blur.title")}`   + " • " +
+        `${get("backgroundOpacity",   {ui})} ${format("background.menu.opacity.title")}`+ " • " +
+        `${get("backgroundRepeat",    {ui})} ${format("background.menu.repeat.title")}` + " • " +
+        `${get("backgroundSize",      {ui})} ${format("background.menu.size.title")}`;
 
     // only include time if nonzero (enabled)
     const time: number = +get("backgroundChangeTime", {ui});
 
     if(time > 0)
-        detail += " • " + appendS(time, "second");
+        detail += ` • ${format("background.menu.second", time)}`;
 
     // quick pick
     return quickPickItem({
@@ -177,58 +178,58 @@ const getQuickPick: (ui: UI, icon: string) => CommandQuickPickItem = (ui: UI, ic
 export const backgroundMenu: (ui: UI) => void = (ui: UI) =>
     showQuickPick([
         quickPickItem({
-            label: "$(file-media) File",
-            description: `${appendS(get(`${ui}Backgrounds`), "Glob")} (${appendS(count(get(`${ui}Backgrounds`)), "Background")})`,
-            detail: "Select background image files",
+            label: `$(file-media) ${format("background.menu.file")}`,
+            description: `${get(`${ui}Backgrounds`).length} Globs (${count(get(`${ui}Backgrounds`))} Backgrounds)`,
+            detail: format("background.menu.fileDetail"),
             ui,
             handle: () => fileMenu(ui)
         }),
         // options
         separator(),
         quickPickItem({
-            label: "$(arrow-both) Alignment",
+            label: `$(arrow-both) ${format("background.configuration.alignment")}`,
             description: `${appendIf(get("backgroundAlignment", {ui}), s => s === "Manual", ` (${get("backgroundAlignmentValue", {ui})})`)}`,
-            detail: "Background image alignment",
+            detail: format("background.menu.alignmentDetail"),
             ui,
             handle: () => alignMenu(ui)
         }),
         quickPickItem({
-            label: "$(eye) Blur",
+            label: `$(eye) ${format("background.configuration.blur")}`,
             description: `${get("backgroundBlur", {ui})}`,
-            detail: "Background image blur",
+            detail: format("background.menu.blurDetail"),
             ui,
             handle: () => blurMenu(ui)
         }),
         quickPickItem({
-            label: "$(color-mode) Opacity",
+            label: `$(color-mode) ${format("background.configuration.opacity")}`,
             description: `${get("backgroundOpacity", {ui})}`,
-            detail: "Background image opacity",
+            detail: format("background.menu.opacityDetail"),
             ui,
             handle: () => opacityMenu(ui)
         }),
         quickPickItem({
-            label: "$(multiple-windows) Repeat",
+            label: `$(multiple-windows) ${format("background.configuration.repeat")}`,
             description: `${get("backgroundRepeat", {ui})}`,
-            detail: "Background image repeat",
+            detail: format("background.menu.repeatDetail"),
             ui,
             handle: () => repeatMenu(ui)
         }),
         quickPickItem({
-            label: "$(screen-full) Size",
+            label: `$(screen-full) ${format("background.configuration.size")}`,
             description: `${appendIf(get("backgroundSize", {ui}), s => s === "Manual", ` (${get("backgroundSizeValue", {ui})})`)}`,
-            detail: "Background image size",
+            detail: format("background.menu.sizeDetail"),
             ui,
             handle: () => sizeMenu(ui)
         }),
         quickPickItem({
-            label: "$(clock) Time",
-            description: `${appendS(+get("backgroundChangeTime", {ui}), "second")}`,
-            detail: "How often to change the background",
+            label: `$(clock) ${format("background.configuration.time")}`,
+            description: format("background.menu.second", +get("backgroundChangeTime", {ui})),
+            detail: format("background.menu.timeDetail"),
             ui,
             handle: () => timeMenu(ui)
         })
     ], {
-        title: `${capitalize(ui)} Background` + (target() === ConfigurationTarget.Workspace ? " (Workspace)": ""),
+        title: `${capitalize(ui)} Background` + (target() === ConfigurationTarget.Workspace ? ` (${"background.configuration.settingScopeWorkspace"})` : ""),
         matchOnDescription: true,
         matchOnDetail: true
     }, optionMenu);

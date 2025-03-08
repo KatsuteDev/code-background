@@ -24,20 +24,21 @@ import { round } from "../lib/math";
 import { showInputBox } from "../lib/vscode";
 
 import { backgroundMenu, title } from "./menu";
+import { format } from "../lib/l10n";
 
 export const show: (ui: UI) => void = (ui: UI) => {
     const current: number = round(get("backgroundOpacity", {ui}) as number, 2);
 
     showInputBox({
-        title: title("Opacity", ui),
-        placeHolder: "Background opacity",
+        title: title(format("background.menu.opacity.title"), ui),
+        placeHolder: format("background.menu.opacity.detail"),
         value: current.toString(),
-        prompt: `Background opacity (${current}). ${(get("useInvertedOpacity") ? 0 : 1)} is fully visible and ${(get("useInvertedOpacity") ? 1 : 0)} is invisible.`,
+        prompt: `Background opacity (${current}). ${format("background.menu.opacity.description", get("useInvertedOpacity") ? 0 : 1, get("useInvertedOpacity") ? 1 : 0)})`,
         validateInput: (value: string) => {
             if(isNaN(+value))
-                return "Not a number";
+                return format("background.menu.opacity.nan");
             else if(+value < 0 || +value > 1)
-                return "Opacity must be between 0 and 1";
+                return format("background.menu.opacity.range");
             else
                 return null;
         },
@@ -49,12 +50,11 @@ export const show: (ui: UI) => void = (ui: UI) => {
                         .then(() => backgroundMenu(ui)); // reopen menu
                 }else{
                     window.showWarningMessage(
-                        "An opacity of " + o + " might make it difficult to see the UI, " +
-                        "are you sure you want to use this opacity?",
+                        format("background.menu.opacity.low", o),
                         { modal: true },
-                        "Yes"
-                    ).then((c?: "Yes") => {
-                        if(c === "Yes")
+                        format("background.menu.opacity.y")
+                    ).then((c?: string) => {
+                        if(c === format("background.menu.opacity.y"))
                             update("backgroundOpacity", o, ui)
                                 .then(() => backgroundMenu(ui)); // reopen menu
                     });

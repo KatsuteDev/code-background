@@ -31,6 +31,7 @@ import { optionMenu } from "./menu/menu";
 import { configuration, get, update } from "./extension/config";
 import { env } from "vscode";
 import { setUserDir } from "./extension/env";
+import { format } from "./lib/l10n";
 
 //
 
@@ -48,7 +49,7 @@ export const statusbar: StatusBarItem = (() => {
     item.command = "background.config";
     item.name = "Background";
     item.text = "$(file-media) Background";
-    item.tooltip = "Open background configuration";
+    item.tooltip = format("background.status.tooltip");
 
     return item;
 })();
@@ -69,10 +70,10 @@ export const activate: (context: ExtensionContext) => any = (context: ExtensionC
         product = join(dir, "product.json");
 
         if(!existsSync(workbench)){
-            window.showErrorMessage(`Failed to find '${workbench}', please report this issue`);
+            window.showErrorMessage(format("background.install.missing", workbench));
             return;
         }else if(!existsSync(product)){
-            window.showErrorMessage(`Failed to find '${product}', please report this issue`);
+            window.showErrorMessage(format("background.install.missing", product));
             return;
         }else{ // workbench & product exists
             const workbench_backup: string = workbench.replace(".js", "-backup.js");
@@ -88,10 +89,13 @@ export const activate: (context: ExtensionContext) => any = (context: ExtensionC
                     /* writer.ts       */ product.toString().replace(/\\/g, '/').includes("/snap/");
 
                     if(snap){
-                        window.showErrorMessage("Background extension does not support snap installations, use deb or rpm");
+                        window.showErrorMessage(format("background.extension.writer.snapError"));
                         return;
                     }else{
-                        window.showWarningMessage("Failed to backup files, run command as administrator?", {detail: `The Background extension does not have permission to backup to the VSCode folder, run command using administrator permissions?\n\n${err.message}`, modal: true}, "Yes").then((value?: string) => {
+                        window.showWarningMessage(
+                            format("background.install.backupError"),
+                            {detail: `${format("background.install.backupPrompt")}\n\n${err.message}`, modal: true}, "Yes"
+                        ).then((value?: string) => {
                             if(value === "Yes"){
                                 const command: string = copyCommand([
                                     [workbench, workbench_backup],
@@ -100,22 +104,22 @@ export const activate: (context: ExtensionContext) => any = (context: ExtensionC
                                 exec(command, {name: "VSCode Extension Host"}, (err?: Error) => {
                                     if(err)
                                         window.showErrorMessage(
-                                            "Failed to backup files",
+                                            format("background.install.failedBackup"),
                                             {
-                                                detail: `OS: ${platform()} ${release()}\nUsing command: ${command}\n\n${err.name}\n${err.message}`.trim(),
+                                                detail: `OS: ${platform()} ${release()}\nCMD: ${command}\n\n${err.name}\n${err.message}`.trim(),
                                                 modal: true
                                             }
                                         );
                                 });
                             }else
-                                window.showWarningMessage("Background extension is running without backup files");
+                                window.showWarningMessage(format("background.install.unsafe"));
                         });
                     }
                 }
             }
         }
     }else{
-        window.showErrorMessage("Failed to find application directory, please report this issue");
+        window.showErrorMessage(format("background.install.dirError"));
         return;
     }
 
@@ -150,7 +154,7 @@ export const activate: (context: ExtensionContext) => any = (context: ExtensionC
         if(get("backgroundOpacity", {scope: "global", includeDefault: false})){ // has opacity set
             update("useInvertedOpacity", true, undefined, true) // update setting
                 .then(() => context.globalState.update("migratedOpacity", true)) // set migrated (changed)
-                .then(() => window.showInformationMessage("Background opacity settings have been migrated to the latest version."));
+                .then(() => window.showInformationMessage(format("background.install.migrate")));
         }else{
             context.globalState.update("migratedOpacity", true); // set migrated (no change)
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Katsute <https://github.com/Katsute>
+ * Copyright (C) 2024 Katsute <https://github.com/Katsute>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-export const appendIf: (s: string, condition: (s: string) => boolean, append: string) => string = (s: string, condition: (s: string) => boolean, append: string) =>
-    s + (condition(s) ? append : '');
+import { env } from "vscode";
 
-export const capitalize: (s: string) => string = (s: string) =>
-    `${(s[0] ?? "").toUpperCase() + (s ?? "").substring(1)}`;
+type LocaleSet = {[key: string]: string};
+
+// https://code.visualstudio.com/docs/getstarted/locales
+const Locales: {[key: string]: LocaleSet} = Object.freeze({
+    "en": Object.freeze(require("../../package.nls.json"))
+});
+
+const getString: () => LocaleSet = () => Locales[env.language] ?? {};
+
+export const format: (key: string, ...args: any[]) => string = (key: string, ...args: any[]): string => {
+    const str: string = getString()[key] ?? getString()["en"] ?? key;
+    return str.replace(/{(\d+)}/g, (m, i) => args[i] ?? m);
+}

@@ -17,6 +17,7 @@
  */
 
 import { UI, get, update } from "../extension/config";
+import { format } from "../lib/l10n";
 
 import { round } from "../lib/math";
 import { showInputBox } from "../lib/vscode";
@@ -27,15 +28,15 @@ export const show: (ui: UI) => void = (ui: UI) => {
     const current: number = round(get("backgroundChangeTime", {ui}) as number, 2);
 
     showInputBox({
-        title: title("Change Time", ui),
-        placeHolder: "Background change time",
+        title: title(format("background.menu.time.title"), ui),
+        placeHolder: format("background.menu.time.detail"),
         value: current.toString(),
-        prompt: `Background change time (${current}). How long in seconds before the background should automatically change. Set to 0 to always use the same image.`,
+        prompt: `${format("background.menu.time.detail")} (${current}). ${format("background.menu.time.description")}`,
         validateInput: (value: string) => {
             if(isNaN(+value))
-                return "Not a number";
+                return format("background.menu.time.nan");
             else if(+value < 0)
-                return "Background change time must be a positive number";
+                return format("background.menu.time.range");
             else
                 return null;
         },

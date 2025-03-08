@@ -21,12 +21,12 @@ import { Uri, window } from "vscode";
 import { extensions } from "../extension/inject";
 import { UI, get as getConfig, update } from "../extension/config";
 
-import { appendS } from "../lib/string";
 import { count, escapePath } from "../lib/glob";
 import { unique } from "../lib/array";
 import { CommandQuickPickItem, quickPickItem, separator, showInputBox, showQuickPick } from "../lib/vscode";
 
 import { backgroundMenu, title } from "./menu";
+import { format } from "../lib/l10n";
 
 // config
 
@@ -80,20 +80,20 @@ export const show: (ui: UI) => void = (ui: UI) =>{
             label: glob.replace(/(\$\(\w+\))/g, "\\$1"),
             value: glob,
             ui,
-            description: `${appendS(count(glob), "matching file")}`,
+            description: format("background.menu.file.delete.count", count(glob)),
             // update input
             handle: (item: CommandQuickPickItem) =>
                 showInputBox({
-                    title: `Update ${item.value}`,
-                    placeHolder: "File path, glob, or URL; leave blank to remove",
+                    title: format("background.menu.file.update.title", item.value),
+                    placeHolder: format("background.menu.file.update.detail"),
                     value: item.value ?? "",
-                    prompt: "Use only '/' for directories, '\\' is reserved for escape characters. Leave this field blank to remove.",
+                    prompt: format("background.menu.file.update.description"),
                     // validation
                     validateInput: (value: string) => {
                         if(value.startsWith("file://"))
-                            return "Do not include 'file://' as part of the file path";
+                            return format("background.menu.file.update.file");
                         else if(value.startsWith("http://"))
-                            return "Images must be served over HTTPS";
+                            return format("background.menu.file.update.http");
                         else
                             return null;
                     },
@@ -115,47 +115,47 @@ export const show: (ui: UI) => void = (ui: UI) =>{
         separator(),
         quickPickItem({ // file
             alwaysShow: true,
-            label: "$(file-add) Add a File",
+            label: `$(file-add) ${format("background.menu.file.addFile.title")}`,
             ui,
             handle: (item: CommandQuickPickItem) =>
                 window.showOpenDialog({
                     canSelectFiles: true,
                     canSelectFolders: false,
                     canSelectMany: true,
-                    openLabel: "Select Image",
-                    filters: {"Images": extensions()}
+                    openLabel: format("background.menu.file.addFile.label"),
+                    filters: {Images: extensions()}
                 }).then((files?: Uri[]) =>
                     files && add(ui, files.map(file => escapePath(file)))
                 )
         }),
         quickPickItem({ // folder
             alwaysShow: true,
-            label: "$(file-directory-create) Add a Folder",
+            label: `$(file-directory-create) ${format("background.menu.file.addFolder.title")}`,
             ui,
             handle: (item: CommandQuickPickItem) =>
                 window.showOpenDialog({
                     canSelectFiles: false,
                     canSelectFolders: true,
                     canSelectMany: true,
-                    openLabel: "Select Folder"
+                    openLabel: format("background.menu.file.addFolder.label")
                 }).then((files?: Uri[]) =>
                     files && add(ui, files.map(file => `${escapePath(file)}/**`))
                 )
         }),
         quickPickItem({ // glob
             alwaysShow: true,
-            label: "$(kebab-horizontal) Add a Glob",
+            label: `$(kebab-horizontal) ${format("background.menu.file.addGlob.title")}`,
             ui,
             handle: (item: CommandQuickPickItem) =>
                 window.showInputBox({
-                    title: "Add Glob",
-                    placeHolder: "File path or glob",
-                    prompt: "Add a file or a glob. Use only '/' for directories, '\\' is reserved for escape characters.",
+                    title: format("background.menu.file.addGlob.title"),
+                    placeHolder: format("background.menu.file.addGlob.detail"),
+                    prompt: format("background.menu.file.addGlob.description"),
                     validateInput: (value: string) => {
                         if(value.startsWith("file://"))
-                            return "Do not include 'file://' as part of the file path";
+                            return format("background.menu.file.addGlob.file");
                         else if(value.startsWith("http://") || value.startsWith("https://"))
-                            return "Image URLs do not support glob, use Add URL option"
+                            return format("background.menu.file.addGlob.http");
                         else
                             return null;
                     }
@@ -165,22 +165,22 @@ export const show: (ui: UI) => void = (ui: UI) =>{
         }),
         quickPickItem({ // url
             alwaysShow: true,
-            label: "$(ports-open-browser-icon) Add a URL",
+            label: `$(ports-open-browser-icon) ${format("background.menu.file.addURL.title")}`,
             ui,
             handle: (item: CommandQuickPickItem) =>
                 window.showInputBox({
-                    title: "Add URL",
-                    placeHolder: "Image URL",
-                    prompt: "Add a image URL. Must be served over HTTPS",
+                    title: format("background.menu.file.addURL.title"),
+                    placeHolder: format("background.menu.file.addURL.detail"),
+                    prompt: format("background.menu.file.addURL.description"),
                     validateInput: (value: string) => {
                         if(value.startsWith("file://"))
-                            return "File URLs not accepted, use Add File option";
+                            return format("background.menu.file.addURL.file");
                         else if(value.startsWith("http://"))
-                            return "Images must be served over HTTPS";
+                            return format("background.menu.file.addURL.http");
                         else if(value.startsWith("https://"))
                             return null;
                         else
-                            return "Invalid URL";
+                            return format("background.menu.file.addURL.invalid");
                     }
                 }).then((url?: string) => {
                     url && add(ui, url);
@@ -191,7 +191,7 @@ export const show: (ui: UI) => void = (ui: UI) =>{
             separator(),
             quickPickItem({
                 alwaysShow: true,
-                label: "$(trash) Delete a Background",
+                label: `$(trash) ${format("background.menu.file.delete.title")}`,
                 ui,
                 handle: (item: CommandQuickPickItem) => {
                     const items: CommandQuickPickItem[] = get(ui)
@@ -202,15 +202,15 @@ export const show: (ui: UI) => void = (ui: UI) =>{
                                 label: glob.replace(/(\$\(\w+\))/g, "\\$1"),
                                 value: glob,
                                 ui: item.ui,
-                                description: `${appendS(matches, "matching file")}`
+                                description: format("background.menu.file.delete.count", matches)
                             });
                         });
 
                         window.showQuickPick(
                             items,
                             {
-                                title: title("Delete", ui),
-                                placeHolder: "Files",
+                                title: title(format("background.menu.file.delete.action"), ui),
+                                placeHolder: format("background.menu.file.detail.actionDetail"),
                                 canPickMany: true
                             }
                         ).then((selected?: CommandQuickPickItem[]) =>
@@ -220,8 +220,8 @@ export const show: (ui: UI) => void = (ui: UI) =>{
             })
         ] : []
     ], {
-        title: title("Files", ui),
-        placeHolder: "Files"
+        title: title(format("background.menu.file.title"), ui),
+        placeHolder: format("background.menu.file.title")
     },
     () => backgroundMenu(ui));
 }

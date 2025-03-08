@@ -19,6 +19,7 @@
 import { InputBoxOptions, QuickPick, QuickPickItem, QuickPickItemKind, QuickPickOptions, commands, window } from "vscode";
 
 import { UI } from "../extension/config";
+import { format } from "./l10n";
 
 // reload
 
@@ -48,7 +49,7 @@ export const quickPickItem:
     (item: CommandQuickPickItem, current?: string) => CommandQuickPickItem =
     (item: CommandQuickPickItem, current?: string) => ({
     ...item,
-    description: ((item.description ?? "") + (item.label === current ? " (selected)" : "")).trim()
+    description: ((item.description ?? "") + (item.label === current ? ` (${format("background.lib.vscode.quickpickSelected")})` : "")).trim()
 });
 
 export const showQuickPick:
@@ -61,7 +62,7 @@ export const showQuickPick:
         reference
             ? [quickPickItem({
                 alwaysShow: true,
-                label: "$(arrow-left) Back",
+                label: `$(arrow-left) ${format("background.lib.vscode.quickpickBack")}`,
                 handle: reference
             }), separator()]
             : [],

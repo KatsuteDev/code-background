@@ -18,6 +18,7 @@
 
 import { UI, get, updateFromLabel } from "../extension/config";
 import { Properties, getConfigurationProperty } from "../extension/package";
+import { format } from "../lib/l10n";
 
 import { CommandQuickPickItem, quickPickItem, showQuickPick } from "../lib/vscode";
 
@@ -33,15 +34,15 @@ export const show: (ui: UI) => void = (ui: UI) => {
     const current: string = get("backgroundRepeat", {ui}) as string;
 
     showQuickPick([
-        quickPickItem({ label: prop.items!.enum![0], description: prop.items!.enumDescriptions![0], handle: handle, ui }, current),
-        quickPickItem({ label: prop.items!.enum![1], description: prop.items!.enumDescriptions![1], handle: handle, ui }, current),
-        quickPickItem({ label: prop.items!.enum![2], description: prop.items!.enumDescriptions![2], handle: handle, ui }, current),
-        quickPickItem({ label: prop.items!.enum![3], description: prop.items!.enumDescriptions![3], handle: handle, ui }, current),
-        quickPickItem({ label: prop.items!.enum![4], description: prop.items!.enumDescriptions![4], handle: handle, ui }, current),
-        quickPickItem({ label: prop.items!.enum![5], description: prop.items!.enumDescriptions![5], handle: handle, ui }, current),
+        quickPickItem({ label: prop.items!.enum![0], description: format(prop.items!.enumDescriptions![0].replace(/%/g, '')), handle: handle, ui }, current),
+        quickPickItem({ label: prop.items!.enum![1], description: format(prop.items!.enumDescriptions![1].replace(/%/g, '')), handle: handle, ui }, current),
+        quickPickItem({ label: prop.items!.enum![2], description: format(prop.items!.enumDescriptions![2].replace(/%/g, '')), handle: handle, ui }, current),
+        quickPickItem({ label: prop.items!.enum![3], description: format(prop.items!.enumDescriptions![3].replace(/%/g, '')), handle: handle, ui }, current),
+        quickPickItem({ label: prop.items!.enum![4], description: format(prop.items!.enumDescriptions![4].replace(/%/g, '')), handle: handle, ui }, current),
+        quickPickItem({ label: prop.items!.enum![5], description: format(prop.items!.enumDescriptions![5].replace(/%/g, '')), handle: handle, ui }, current),
     ], {
-        title: title("Repeat", ui),
+        title: title(format("background.menu.repeat.title"), ui),
         matchOnDescription: true,
-        placeHolder: "Background repeat"
+        placeHolder: format("background.menu.repeat.detail")
     });
 };

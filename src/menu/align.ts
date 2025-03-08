@@ -23,6 +23,7 @@ import { isValidCSS } from "../lib/css";
 import { CommandQuickPickItem, quickPickItem, separator, showInputBox, showQuickPick } from "../lib/vscode";
 
 import { backgroundMenu, title } from "./menu";
+import { format } from "../lib/l10n";
 
 const prop: Properties = getConfigurationProperty("backgroundAlignment");
 
@@ -56,11 +57,11 @@ export const show: (ui: UI) => void = (ui: UI) => {
             handle: (item: CommandQuickPickItem) => {
                 const currentValue: string = get("backgroundAlignmentValue", {ui});
                 showInputBox({
-                    title: title("Alignment", ui),
-                    placeHolder: "Background position",
+                    title: title(format("background.menu.align.title"), ui),
+                    placeHolder: format("background.menu.align.detail"),
                     value: currentValue,
-                    prompt: `Background position (${currentValue}). The literal value for the 'background-position' css property.`,
-                    validateInput: (value: string) => !isValidCSS(value) ? "Invalid CSS" : null,
+                    prompt: `${format("background.menu.align.detail")} (${currentValue}). ${format("background.menu.align.description")}`,
+                    validateInput: (value: string) => !isValidCSS(value) ? format("background.menu.cssError") : null,
                     handle: (value: string) => {
                         if(isValidCSS(value)){
                             let changed: boolean = get("backgroundAlignment", {ui}) !== prop.items!.enum![9] || currentValue !== value;
@@ -77,8 +78,8 @@ export const show: (ui: UI) => void = (ui: UI) => {
             }
         }, current)
     ], {
-        title: title("Alignment", ui),
+        title: title(format("background.menu.align.title"), ui),
         matchOnDescription: true,
-        placeHolder: "Background alignment"
+        placeHolder: format("background.menu.align.detail")
     });
 }

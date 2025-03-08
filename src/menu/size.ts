@@ -20,6 +20,7 @@ import { UI, get, notify, update, updateFromLabel } from "../extension/config";
 import { Properties, getConfigurationProperty } from "../extension/package";
 
 import { isValidCSS } from "../lib/css";
+import { format } from "../lib/l10n";
 import { CommandQuickPickItem, quickPickItem, separator, showInputBox, showQuickPick } from "../lib/vscode";
 
 import { backgroundMenu, title } from "./menu";
@@ -35,19 +36,19 @@ export const show: (ui: UI) => void = (ui: UI) => {
 
     showQuickPick([
         // size
-        quickPickItem({ label: prop.items!.enum![0], description: prop.items!.enumDescriptions![0], handle, ui }, current),
-        quickPickItem({ label: prop.items!.enum![1], description: prop.items!.enumDescriptions![1], handle, ui }, current),
-        quickPickItem({ label: prop.items!.enum![2], description: prop.items!.enumDescriptions![2], handle, ui }, current),
+        quickPickItem({ label: prop.items!.enum![0], description: format(prop.items!.enumDescriptions![0].replace(/%/g, '')), handle, ui }, current),
+        quickPickItem({ label: prop.items!.enum![1], description: format(prop.items!.enumDescriptions![1].replace(/%/g, '')), handle, ui }, current),
+        quickPickItem({ label: prop.items!.enum![2], description: format(prop.items!.enumDescriptions![2].replace(/%/g, '')), handle, ui }, current),
         separator(),
         // manual
         quickPickItem({ label: prop.items!.enum![3], description: `(${get("backgroundSizeValue", {ui})})`, ui: ui, handle: (item: CommandQuickPickItem) => {
             const currentValue: string = get("backgroundSizeValue", {ui});
             showInputBox({
-                title: title("Size", ui),
-                placeHolder: "Background size",
+                title: title(format("background.menu.size.title"), ui),
+                placeHolder: format("background.menu.size.detail"),
                 value: currentValue,
-                prompt: `Background size (${currentValue}). The literal value for the 'background-size' css property.`,
-                validateInput: (value: string) => !isValidCSS(value) ? "Invalid CSS" : null,
+                prompt: `${format("background.menu.size.detail")} (${currentValue}). ${format("background.menu.size.description")}`,
+                validateInput: (value: string) => !isValidCSS(value) ? format("background.menu.cssError") : null,
                 handle: (value: string) => {
                     if(isValidCSS(value)){
                         let changed: boolean = get("backgroundSize", {ui}) !== prop.items!.enum![3] || currentValue !== value;
@@ -64,8 +65,8 @@ export const show: (ui: UI) => void = (ui: UI) => {
         }}, current)
     ],
     {
-        title: title("Size", ui),
+        title: title(format("background.menu.size.title"), ui),
         matchOnDescription: true,
-        placeHolder: "Background size"
+        placeHolder: format("background.menu.size.detail")
     });
 }

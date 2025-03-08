@@ -19,6 +19,7 @@
 import { UI, get, update } from "../extension/config";
 
 import { isValidCSS } from "../lib/css";
+import { format } from "../lib/l10n";
 import { showInputBox } from "../lib/vscode";
 
 import { backgroundMenu, title } from "./menu";
@@ -27,10 +28,10 @@ export const show: (ui: UI) => void = (ui: UI) => {
     const current: string = get("backgroundBlur", {ui}) as string;
 
     showInputBox({
-        title: title("Blur", ui),
-        placeHolder: "Background blur",
+        title: title(format("background.menu.blur.title"), ui),
+        placeHolder: format("background.menu.blur.detail"),
         value: current,
-        prompt: `Background blur (${current})`,
+        prompt: `${format("background.menu.blur.detail")} (${current})`,
         validateInput: (value: string) => !isValidCSS(value) ? "Invalid CSS" : null,
         handle: (value: string) => {
             if(isValidCSS(value))

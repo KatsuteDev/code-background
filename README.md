@@ -125,6 +125,14 @@ If the path is not working, add an additional `/` after the variable.
 
 ## &nbsp;
 
+### Contributing Locale Updates
+
+Translations from online translators not accepted.
+
+Locale files must use the language name in <https://code.visualstudio.com/docs/getstarted/locales>.
+
+Copy `package.nls.json` to `package.nls.{language}.json` and replace only the values, `{#}` is automatically replaced in the extension.
+
 ### API
 
 Add this extension to your `package.json`.
